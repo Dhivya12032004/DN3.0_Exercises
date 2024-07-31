@@ -1,0 +1,96 @@
+import java.util.Arrays;
+import java.util.Comparator;
+
+class Book {
+    int bookId;
+    String title;
+    String author;
+
+    public Book(int bookId, String title, String author) {
+        this.bookId = bookId;
+        this.title = title;
+        this.author = author;
+    }
+
+    @Override
+    public String toString() {
+        return "Book ID: " + bookId + ", Title: " + title + ", Author: " + author;
+    }
+}
+
+class LibraryManagementSystem {
+    private Book[] books;
+    private int bookCount;
+
+    public LibraryManagementSystem(int capacity) {
+        books = new Book[capacity];
+        bookCount = 0;
+    }
+
+    public void addBook(Book book) {
+        if (bookCount < books.length) {
+            books[bookCount++] = book;
+        } else {
+            System.out.println("Library is full!");
+        }
+    }
+
+    // Linear search by title
+    public Book linearSearchByTitle(String title) {
+        for (int i = 0; i < bookCount; i++) {
+            if (books[i].title.equalsIgnoreCase(title)) {
+                return books[i];
+            }
+        }
+        return null;
+    }
+
+    // Binary search by title (Assuming books are sorted by title)
+    public Book binarySearchByTitle(String title) {
+        int left = 0, right = bookCount - 1;
+        while (left <= right) {
+            int mid = left + (right - left) / 2;
+            int comparison = books[mid].title.compareToIgnoreCase(title);
+            if (comparison == 0) {
+                return books[mid];
+            } else if (comparison < 0) {
+                left = mid + 1;
+            } else {
+                right = mid - 1;
+            }
+        }
+        return null;
+    }
+
+    // Sort books by title
+    public void sortBooksByTitle() {
+        Arrays.sort(books, 0, bookCount, Comparator.comparing(book -> book.title, String.CASE_INSENSITIVE_ORDER));
+    }
+
+    public static void main(String[] args) {
+        LibraryManagementSystem lms = new LibraryManagementSystem(10);
+
+        lms.addBook(new Book(1, "To Kill a Mockingbird", "Harper Lee"));
+        lms.addBook(new Book(2, "1984", "George Orwell"));
+        lms.addBook(new Book(3, "The Great Gatsby", "F. Scott Fitzgerald"));
+        lms.addBook(new Book(4, "Moby Dick", "Herman Melville"));
+
+        System.out.println("Linear Search for '1984':");
+        Book book1 = lms.linearSearchByTitle("1984");
+        if (book1 != null) {
+            System.out.println(book1);
+        } else {
+            System.out.println("Book not found!");
+        }
+
+        lms.sortBooksByTitle();
+
+        System.out.println("\nBinary Search for 'Moby Dick':");
+        Book book2 = lms.binarySearchByTitle("Moby Dick");
+        if (book2 != null) {
+            System.out.println(book2);
+        } else {
+            System.out.println("Book not found!");
+        }
+    }
+}
